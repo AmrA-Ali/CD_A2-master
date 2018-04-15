@@ -35,7 +35,7 @@ enum token{
 string token2Str[26] = {
     "id", "num",
     "int", "void",
-    "let", "if", "while", "return",
+    "let", "if", "while", "return", "else",
     "+/-", "*/\\",
     "<=", "<", ">", ">=", "==", "!=", "=",
     "[", "]", "(", ")", "{", "}",
@@ -178,7 +178,7 @@ SyntaxAnalyzer::node* SyntaxAnalyzer::declaration_list(){
 //node* params();
 //node* param_list();
 
-
+/**** Procedures 16 ----> 30***/
 SyntaxAnalyzer::node* SyntaxAnalyzer::selection_stmt() {
 	node* ifptr;
 	match(IF);
@@ -192,16 +192,58 @@ SyntaxAnalyzer::node* SyntaxAnalyzer::selection_stmt() {
 		node* elseptr = new node("ELSE", thenptr, elseptr);
 		ifptr = new node("IF", exprptr, elseptr);
 	}
-	else {
-		ifptr = new node("IF", exprptr, thenptr);
-	}
+	else ifptr = new node("IF", exprptr, thenptr);
 	return ifptr;
 }
-//node* iteration_stmt();
-//node* return_stmt();
-//node* expression();
-//node* var();
-//node* simple_expression();
+SyntaxAnalyzer::node* SyntaxAnalyzer::iteration_stmt() {
+	match(WHILE);
+	match(CLB);
+	node* exprptr = expression();
+	match(CRB);
+	node* stmtptr = statement();
+	node* whileptr = new node("WHILE", exprptr, stmtptr);
+	return whileptr;
+}
+SyntaxAnalyzer::node* SyntaxAnalyzer::return_stmt() {
+	match(RETURN);
+	node* ptr;
+	switch (currToken) {
+	case SEMI_COLON: {  match(SEMI_COLON); }
+	/* NEEDS ATTENTION : { ptr = expression(); match(SEMI_COLON); } */ 
+	}
+}
+SyntaxAnalyzer::node* SyntaxAnalyzer::expression() {
+	match(RETURN);
+	node* ptr;
+	switch (currToken) {
+	case SEMI_COLON: {  match(SEMI_COLON); }
+	/* NEEDS ATTENTION : { ptr = expression(); match(SEMI_COLON); } */
+	}
+}
+SyntaxAnalyzer::node* SyntaxAnalyzer::var() {
+	match(ID);
+	node* ptr;
+	switch (currToken) {
+	case LB: {  match(LB); ptr = expression(); match(RB); return ptr; }
+	default: syntaxError(LB);
+	}
+}
+SyntaxAnalyzer::node* SyntaxAnalyzer::simple_expression() {
+	node* left = additive_expression();
+	node* right;
+	switch (currToken) {
+	/* NEEDS ATTENTION case : {  match(LB); ptr = expression(); match(RB); return ptr; } */
+	default: syntaxError(LB);
+	}
+}
+SyntaxAnalyzer::node* SyntaxAnalyzer::relop() {
+	match(ID);
+	node* ptr;
+	switch (currToken) {
+	case LB: {  match(LB); ptr = expression(); match(RB); return ptr; }
+	default: syntaxError(LB);
+	}
+}
 //node* relop();
 //node* additive_expression();
 //node* addop();
